@@ -17,7 +17,7 @@ export default React.memo((props: any) => {
         const achv = await window.electron.open_select_archive_dialog()
         set_loading_extract(false)
         if (achv) {
-            set_state('extract_dir_content', achv)
+            set_state('extract_dir_content', achv)            
         }
     }, [])
 
@@ -30,7 +30,7 @@ export default React.memo((props: any) => {
             set_state('compress_dir_content', {
                 file_type,
                 ...dir_to_compress
-            })
+            })            
         }
     }, [])
 
@@ -41,86 +41,126 @@ export default React.memo((props: any) => {
     }, [])
 
     return (
-        <div>
+        <div className="w-full h-[100vh] flex flex-col overflow-hidden">
             <TitleBar />
-
-            <div>
-                <button onClick={() => set_active_tab('extract')}>
+            <div className="flex justify-center gap-2 p-4 pb-2">
+                <button
+                    onClick={() => set_active_tab('extract')}
+                    className={`px-8 py-3 rounded-2xl cursor-pointer font-medium text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ${
+                        active_tab === 'extract' 
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-2xl scale-105' 
+                            : 'glass-blue'
+                    }`}
+                >
                     Extraer Archivo
                 </button>
-                <button onClick={() => set_active_tab('compress')}>
+                
+                <button
+                    onClick={() => set_active_tab('compress')}
+                    className={`px-8 py-3 rounded-2xl cursor-pointer font-medium text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ${
+                        active_tab === 'compress' 
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-2xl scale-105' 
+                            : 'glass-blue'
+                    }`}
+                >
                     Comprimir Archivos
                 </button>
             </div>
 
             {active_tab === 'extract' && (
-                <div>
-                    {!extract_dir_content ? (
-                        <div>
-                            <button onClick={handle_open_achv_file}>
-                                {loading_extract ? (
-                                    <div>
-                                        <span>Cargando...</span>
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <span>Abrir Archivo</span>
-                                    </div>
-                                )}
-                            </button>
-                        </div>
-                    ) : (
-                        <div>
-                            <ExtractComponent />
-                        </div>
-                    )}
-                </div>
+            <div className="w-full h-full p-4">
+                {
+                    !extract_dir_content ?
+                    <div className="w-full h-full flex items-center justify-center">
+                        <button 
+                            onClick={handle_open_achv_file} 
+                            className="glass-strong px-8 py-4 rounded-2xl text-white font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3 border border-white/30 hover:border-white/50"
+                        >
+                            {
+                                loading_extract ?
+                                <div className="flex items-center gap-3">
+                                    <span className="loading loading-spinner loading-md text-blue-300"></span>
+                                    <span>Abriendo archivo...</span>
+                                </div>:
+                                <div className="flex items-center gap-3">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Abrir Archivo</span>
+                                </div>
+                            }
+                        </button>
+                    </div>:
+                    <div className="w-full h-full glass-strong rounded-3xl p-6 overflow-hidden">
+                        <ExtractComponent />
+                    </div>
+                }
+            </div>
             )}
 
             {active_tab === 'compress' && (
-                <div>
-                    {!compress_dir_content ? (
-                        <div>
-                            {loading_compress ? (
-                                <div>
-                                    <span>Cargando directorio...</span>
-                                </div>
-                            ) : (
-                                <div>
-                                    <span>Selecciona tipo de compresión:</span>
-                                    <ul>
-                                        <li>
-                                            <button onClick={() => handle_open_compress_dlg('tar')}>
-                                                Archivo TAR
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button onClick={() => handle_open_compress_dlg('gzip')}>
-                                                Archivo GZIP
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button onClick={() => handle_open_compress_dlg('tgz')}>
-                                                Archivo TGZ
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button onClick={() => handle_open_compress_dlg('zip')}>
-                                                Archivo ZIP
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div>
-                            <CompressComponent />
-                        </div>
-                    )}
-                </div>
+            <div className="w-full h-full p-4">
+                {
+                    !compress_dir_content ?
+                    <div className="w-full h-full flex items-center justify-center">
+                        <details className="dropdown dropdown-bottom">
+                            <summary className="glass-strong px-8 py-4 rounded-2xl text-white font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-3 border border-white/30 hover:border-white/50 cursor-pointer list-none">
+                                {
+                                    loading_compress ?
+                                    <div className="flex items-center gap-3">
+                                        <span className="loading loading-spinner loading-md text-blue-300"></span>
+                                        <span>Cargando directorio...</span>
+                                    </div>:
+                                    <div className="flex items-center gap-3">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        <span>Comprimir Carpeta/Archivo</span>
+                                    </div>
+                                }
+                            </summary>
+                            <ul className="glass-strong menu dropdown-content rounded-2xl z-[1] w-64 p-3 shadow-2xl border border-white/20 mt-2">
+                                <li>
+                                    <a 
+                                        onClick={() => handle_open_compress_dlg('tar')} 
+                                        className="text-white hover:bg-blue-500/30 rounded-xl transition-all duration-200"
+                                    >
+                                        <span className="font-medium">🗂️ Archivo Tar</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a 
+                                        onClick={() => handle_open_compress_dlg('gzip')} 
+                                        className="text-white hover:bg-blue-500/30 rounded-xl transition-all duration-200"
+                                    >
+                                        <span className="font-medium">🗂️ Archivo Gzip</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a 
+                                        onClick={() => handle_open_compress_dlg('tgz')} 
+                                        className="text-white hover:bg-blue-500/30 rounded-xl transition-all duration-200"
+                                    >
+                                        <span className="font-medium">🗂️ Archivo Tgz</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a 
+                                        onClick={() => handle_open_compress_dlg('zip')} 
+                                        className="text-white hover:bg-blue-500/30 rounded-xl transition-all duration-200"
+                                    >
+                                        <span className="font-medium">🗂️ Archivo Zip</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </div>:
+                    <div className="w-full h-full glass-strong rounded-3xl p-6 overflow-hidden">
+                        <CompressComponent />
+                    </div>
+                }
+            </div>
             )}
         </div>
-    );
-
+    )
 })
